@@ -14,47 +14,47 @@ public class Rezerwacja {
         this.statusPlatnosci = statusPlatnosci;
     }
 
-    public Lot getLot() {
+    private Lot getLot() {
         return lot;
     }
 
-    public void setLot(Lot lot) {
+    private void setLot(Lot lot) {
         this.lot = lot;
     }
 
-    public Uzytkownik getKlient() {
+    private Uzytkownik getKlient() {
         return uzytkownik;
     }
 
-    public void setKlient(Uzytkownik klient) {
+    private void setKlient(Uzytkownik klient) {
         this.uzytkownik = klient;
     }
 
-    public int getLiczbaMiejsc() {
+    private int getLiczbaMiejsc() {
         return liczbaMiejsc;
     }
 
-    public void setLiczbaMiejsc(int liczbaMiejsc) {
+    private void setLiczbaMiejsc(int liczbaMiejsc) {
         this.liczbaMiejsc = liczbaMiejsc;
     }
 
-    public double getCena() {
+    private double getCena() {
         return cena;
     }
 
-    public void setCena(double cena) {
+    private void setCena(double cena) {
         this.cena = cena;
     }
 
-    public boolean isStatusPlatnosci() {
+    private boolean isStatusPlatnosci() {
         return statusPlatnosci;
     }
 
-    public void setStatusPlatnosci(boolean statusPlatnosci) {
+    private void setStatusPlatnosci(boolean statusPlatnosci) {
         this.statusPlatnosci = statusPlatnosci;
     }
 
-    public String getNumerRezerwacji(){
+    protected String getNumerRezerwacji(){
         return numer_rezerwacji;
     }
 }

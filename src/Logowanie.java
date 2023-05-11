@@ -11,8 +11,10 @@ public class Logowanie extends JFrame implements ActionListener {
     private String haslo;
     private BazaUzytkownikow baza;
 
-    public Logowanie(BazaUzytkownikow baza) {
+    private BazaRezerwacji rezerwacje;
+    public Logowanie(BazaUzytkownikow baza, BazaRezerwacji rezerwacje) {
         this.baza = baza;
+        this.rezerwacje = rezerwacje;
         setTitle("Logowanie");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400, 300);
@@ -77,10 +79,12 @@ public class Logowanie extends JFrame implements ActionListener {
                 showMessage("Proszę wypełnić wszystkie pola.");
             } else {
                 try {
+                    // Jeśli użytkownik istnieje w bazie
                     if(baza.checkIfUserExists(login, baza)){
                         Uzytkownik uzytkownik = baza.uzytkownicy[baza.getUserSlot(login,baza)];
+                        // Jeśli hasło się zgadza
                         if(uzytkownik.getHaslo().equals(haslo)){
-                            System.out.println("Zalogowano pomyslnie");
+                            PanelUzytkownika panel = new PanelUzytkownika(uzytkownik, rezerwacje);
                             this.dispose();
                         }else {
                             showInformation("Podano bledne haslo!");
@@ -92,7 +96,7 @@ public class Logowanie extends JFrame implements ActionListener {
                 }
             }
         } else if (e.getActionCommand().equals("Anuluj")) {
-            Opcje main = new Opcje(baza);
+            Opcje main = new Opcje(baza, rezerwacje);
             this.dispose();
         }
     }

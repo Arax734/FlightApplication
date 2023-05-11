@@ -1,8 +1,8 @@
 public class Main {
     public static void main(String[] args) {
-        BazaUzytkownikow baza = new BazaUzytkownikow();
-        Opcje menu = new Opcje(baza);
-        baza.dodajUzytkownika(new Uzytkownik("Kacper","Fryt","kf@gmail.com","123456789",
-                "kfryt","haslo",true));
+        // Tworzymy bazy uzytkownikow i rezerwacji, otwieramy menu
+        BazaUzytkownikow baza_uzytkownikow = new BazaUzytkownikow();
+        BazaRezerwacji baza_rezerwacji = new BazaRezerwacji();
+        Opcje menu = new Opcje(baza_uzytkownikow, baza_rezerwacji);
     }
 }

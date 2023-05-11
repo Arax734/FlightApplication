@@ -21,8 +21,11 @@ public class Rejestracja extends JFrame implements ActionListener {
     private String adres;
     private BazaUzytkownikow  baza;
 
-    public Rejestracja(BazaUzytkownikow baza) {
+    private BazaRezerwacji rezerwacje;
+
+    public Rejestracja(BazaUzytkownikow baza, BazaRezerwacji rezerwacje) {
         this.baza = baza;
+        this.rezerwacje = rezerwacje;
         setTitle("Rejestracja");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400, 300);
@@ -117,28 +120,25 @@ public class Rejestracja extends JFrame implements ActionListener {
                     if(baza.checkIfUserExists(login, baza)){
                         showMessage("Użytkownik o danym loginie już istnieje!");
                     }else {
-                        // Tutaj można dodać kod do zapisania rezerwacji w bazie danych lub wysłania jej do systemu rezerwacyjnego
                         baza.dodajUzytkownika(new Uzytkownik(firstName,lastName,email,phone,login,haslo,false));
                         showInformation("Rejestracja została pomyślnie wykonana");
-                        Opcje main = new Opcje(baza);
+                        Opcje main = new Opcje(baza, rezerwacje);
                         this.dispose();
                     }
                 } catch (NumberFormatException ex) {
                 }
             }
         } else if (e.getActionCommand().equals("Anuluj")) {
-            Opcje main = new Opcje(baza);
+            Opcje main = new Opcje(baza, rezerwacje);
             this.dispose();
         }
     }
 
     private void showMessage(String message) {
-        // Wyświetlenie informacji zwrotnej dla użytkownika
         JOptionPane.showMessageDialog(this, message, "Błąd", JOptionPane.ERROR_MESSAGE);
     }
 
     private void showInformation(String message) {
-        // Wyświetlenie informacji zwrotnej dla użytkownika
         JOptionPane.showMessageDialog(this, message, "Operacja zakończona pomyślnie", JOptionPane.INFORMATION_MESSAGE);
     }
 }

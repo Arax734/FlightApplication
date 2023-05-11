@@ -14,7 +14,12 @@ public class RezerwacjaLotu extends JFrame implements ActionListener {
     private JTextField returnDateField;
     private JTextField numPassengersField;
 
-    public RezerwacjaLotu() {
+    private Uzytkownik uzytkownik;
+    private BazaRezerwacji rezerwacje;
+
+    public RezerwacjaLotu(Uzytkownik uzytkownik, BazaRezerwacji rezerwacje) {
+        this.uzytkownik = uzytkownik;
+        this.rezerwacje = rezerwacje;
         setTitle("Rezerwacja lotu");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(500, 400);
@@ -100,6 +105,7 @@ public class RezerwacjaLotu extends JFrame implements ActionListener {
         contentPane.add(messagePanel, BorderLayout.NORTH);
 
         setContentPane(contentPane);
+        this.setLocationRelativeTo(null);
 
         setVisible(true);
     }
@@ -127,8 +133,10 @@ public class RezerwacjaLotu extends JFrame implements ActionListener {
                     if (numPassengersInt <= 0) {
                         showMessage("Ilość pasażerów musi być większa niż 0.");
                     } else {
-                        // Tutaj można dodać kod do zapisania rezerwacji w bazie danych lub wysłania jej do systemu rezerwacyjnego
-                        showInformation("Rezerwacja została pomyślnie złożona.");
+                        // Tutaj stworzymy nową rezerwację lotu
+                        showInformation("Rezerwacja zostala pomyslnie wykonana");
+                        PanelUzytkownika main = new PanelUzytkownika(uzytkownik, rezerwacje);
+                        this.dispose();
                     }
                 } catch (NumberFormatException ex) {
                     showMessage("Ilość pasażerów musi być liczbą.");

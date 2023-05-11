@@ -19,43 +19,43 @@ public class Uzytkownik {
         this.admin = admin;
     }
 
-    public String getImie() {
+    private String getImie() {
         return imie;
     }
 
-    public void setImie(String imie) {
+    private void setImie(String imie) {
         this.imie = imie;
     }
 
-    public String getNazwisko() {
+    private String getNazwisko() {
         return nazwisko;
     }
 
-    public void setNazwisko(String nazwisko) {
+    private void setNazwisko(String nazwisko) {
         this.nazwisko = nazwisko;
     }
 
-    public String getEmail() {
+    private String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    private void setEmail(String email) {
         this.email = email;
     }
 
-    public String getNumerTelefonu() {
+    private String getNumerTelefonu() {
         return numerTelefonu;
     }
 
-    public String getLogin() {
+    protected String getLogin() {
         return login;
     }
 
-    public String getHaslo() {
+    protected String getHaslo() {
         return haslo;
     }
 
-    public void setNumerTelefonu(String numerTelefonu) {
+    private void setNumerTelefonu(String numerTelefonu) {
         this.numerTelefonu = numerTelefonu;
     }
 }
