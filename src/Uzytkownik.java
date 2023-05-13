@@ -1,4 +1,5 @@
 public class Uzytkownik {
+    private int id;
     private String imie;
     private String nazwisko;
     private String email;
@@ -9,7 +10,8 @@ public class Uzytkownik {
 
     public boolean admin;
 
-    public Uzytkownik(String imie, String nazwisko, String email, String numerTelefonu, String login, String haslo, boolean admin) {
+    public Uzytkownik(int id,String imie, String nazwisko, String email, String numerTelefonu, String login, String haslo, boolean admin) {
+        this.id = id;
         this.imie = imie;
         this.nazwisko = nazwisko;
         this.email = email;
@@ -18,44 +20,59 @@ public class Uzytkownik {
         this.haslo = haslo;
         this.admin = admin;
     }
+    protected int getID(){
+        return id;
+    }
+    protected String getImie() {
 
-    private String getImie() {
         return imie;
     }
 
     private void setImie(String imie) {
+
         this.imie = imie;
     }
 
-    private String getNazwisko() {
+    protected String getNazwisko() {
+
         return nazwisko;
     }
 
     private void setNazwisko(String nazwisko) {
+
         this.nazwisko = nazwisko;
     }
 
-    private String getEmail() {
+    protected String getEmail() {
+
         return email;
     }
 
     private void setEmail(String email) {
+
         this.email = email;
     }
 
-    private String getNumerTelefonu() {
+    protected String getNumerTelefonu() {
+
         return numerTelefonu;
     }
 
     protected String getLogin() {
+
         return login;
     }
 
     protected String getHaslo() {
+
         return haslo;
+    }
+    protected boolean isAdmin(){
+        return admin;
     }
 
     private void setNumerTelefonu(String numerTelefonu) {
+
         this.numerTelefonu = numerTelefonu;
     }
 }

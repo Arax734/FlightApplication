@@ -120,7 +120,9 @@ public class Rejestracja extends JFrame implements ActionListener {
                     if(baza.checkIfUserExists(login, baza)){
                         showMessage("Użytkownik o danym loginie już istnieje!");
                     }else {
-                        baza.dodajUzytkownika(new Uzytkownik(firstName,lastName,email,phone,login,haslo,false));
+                        int id = baza.showLastSlot();
+                        String nazwaPliku = "databases/baza_uzytkownikow.txt";
+                        baza.dodajUzytkownika(new Uzytkownik(id,firstName,lastName,email,phone,login,haslo,false),nazwaPliku);
                         showInformation("Rejestracja została pomyślnie wykonana");
                         Opcje main = new Opcje(baza, rezerwacje);
                         this.dispose();
