@@ -6,18 +6,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Opcje {
-    private BazaUzytkownikow baza;
-
-    private BazaRezerwacji rezerwacje;
     private JFrame frame;
     private JPanel panel;
     private JButton option1Button;
     private JButton option2Button;
-    private JButton option3Button;
 
-    public Opcje(BazaUzytkownikow baza, BazaRezerwacji rezerwacje) {
-        this.baza = baza;
-        this.rezerwacje = rezerwacje;
+    public Opcje() {
         frame = new JFrame("Menu główne");
         panel = new JPanel(new GridLayout(0, 1)); // set the layout to a single column
 
@@ -25,7 +19,7 @@ public class Opcje {
         option1Button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Rejestracja rejestracja = new Rejestracja(baza, rezerwacje);
+                new Rejestracja();
                 frame.dispose();
             }
         });
@@ -35,7 +29,7 @@ public class Opcje {
         option2Button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Logowanie logowanie = new Logowanie(baza, rezerwacje);
+                new Logowanie();
                 frame.dispose();
             }
         });

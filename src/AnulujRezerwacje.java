@@ -5,54 +5,40 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.*;
 
-public class ZarzadzanieRezerwacjami extends JFrame implements ActionListener{
+public class AnulujRezerwacje extends JFrame implements ActionListener{
     private Rezerwacja selected;
 
     private Uzytkownik uzytkownik;
     private BazaRezerwacji rezerwacje;
 
-    public ZarzadzanieRezerwacjami(Uzytkownik uzytkownik) {
+    public AnulujRezerwacje(Uzytkownik uzytkownik) {
         this.uzytkownik = uzytkownik;
         this.rezerwacje = BazaRezerwacji.getInstance();
-        setTitle("Zarzadzanie rezerwacjami");
+        setTitle("Usun rezerwacje");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(500, 400);
-
-        if(BazaRezerwacji.getInstance().getRezerwacje().isEmpty()){
-            showMessage("Brak rezerwacji w bazie danych!");
-            new PanelUzytkownika(uzytkownik);
-            this.dispose();
-        }
 
         // Tworzenie panelu z formularzem
         JPanel formPanel = new JPanel();
         formPanel.setLayout(new GridLayout(10, 2));
 
-        JLabel imieLabel = new JLabel("Imie: ");
-        JLabel imieField = new JLabel("---");
-
-        formPanel.add(imieLabel);
-        formPanel.add(imieField);
-
-        JLabel nazwiskoLabel = new JLabel("Nazwisko: ");
-        JLabel nazwiskoField = new JLabel("---");
-
-        formPanel.add(nazwiskoLabel);
-        formPanel.add(nazwiskoField);
-
-        JLabel emailLabel = new JLabel("Email: ");
-        JLabel emailField = new JLabel("---");
-
-        formPanel.add(emailLabel);
-        formPanel.add(emailField);
-
         JLabel rezerwacjaLabel = new JLabel("Rezerwacja: ");
         ArrayList<Rezerwacja> rezerwacje = BazaRezerwacji.getInstance().getRezerwacje();
-        String[] rezerwacja_string = new String[rezerwacje.size()];
+        ArrayList<Rezerwacja> moje = new ArrayList<>();
         for (int x = 0; x < rezerwacje.size(); x++) {
             if (rezerwacje.get(x) != null) {
-                rezerwacja_string[x] = rezerwacje.get(x).getLoginUzytkownika();
-                rezerwacja_string[x] += ": " + rezerwacje.get(x).getLot().getSkad();
+                if(rezerwacje.get(x).getLoginUzytkownika().equals(this.uzytkownik.getLogin())){
+                    moje.add(rezerwacje.get(x));
+                }
+            }
+        }
+        if(moje.isEmpty()){
+            showInformation("Brak wykonanych rezerwacji");
+        }
+        String[] rezerwacja_string = new String[moje.size()];
+        for (int x = 0; x < moje.size(); x++) {
+            if (moje.get(x) != null) {
+                rezerwacja_string[x] = rezerwacje.get(x).getLot().getSkad();
                 rezerwacja_string[x] += " - " + rezerwacje.get(x).getLot().getDokad();
                 rezerwacja_string[x] += " | Ilosc osob: " + rezerwacje.get(x).getLiczbaMiejsc();
                 rezerwacja_string[x] += " | Cena: " + rezerwacje.get(x).getCena()+" PLN";
@@ -64,17 +50,11 @@ public class ZarzadzanieRezerwacjami extends JFrame implements ActionListener{
             @Override
             public void actionPerformed(ActionEvent e) {
                 Rezerwacja selectedRezerwacja = BazaRezerwacji.getInstance().getRezerwacje().get(rezerwacjeField.getSelectedIndex());
-                imieField.setText(selectedRezerwacja.getUzytkownik().getImie());
-                nazwiskoField.setText(selectedRezerwacja.getUzytkownik().getNazwisko());
-                emailField.setText(selectedRezerwacja.getUzytkownik().getEmail());
                 selected = selectedRezerwacja;
             }
         }); 
         if(selected == null){
-            selected = rezerwacje.get(0);
-            imieField.setText(selected.getUzytkownik().getImie());
-            nazwiskoField.setText(selected.getUzytkownik().getNazwisko());
-            emailField.setText(selected.getUzytkownik().getEmail());
+            selected = moje.get(0);
         }
         formPanel.add(rezerwacjaLabel);
         formPanel.add(rezerwacjeField);
@@ -125,7 +105,7 @@ public class ZarzadzanieRezerwacjami extends JFrame implements ActionListener{
                     
                     showInformation("Rezerwacja usunieta pomyslnie!");
                     this.dispose();
-                    new ZarzadzanieRezerwacjami(uzytkownik);
+                    new AnulujRezerwacje(uzytkownik);
                 } catch (NumberFormatException ex) {
                 }
             
@@ -133,11 +113,6 @@ public class ZarzadzanieRezerwacjami extends JFrame implements ActionListener{
             new PanelUzytkownika(uzytkownik);
             dispose();
         }
-    }
-
-    private void showMessage(String message) {
-        // Wyświetlenie informacji zwrotnej dla użytkownika
-        JOptionPane.showMessageDialog(this, message, "Błąd", JOptionPane.ERROR_MESSAGE);
     }
 
     private void showInformation(String message) {

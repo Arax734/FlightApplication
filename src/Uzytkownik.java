@@ -24,32 +24,26 @@ public class Uzytkownik {
         return id;
     }
     protected String getImie() {
-
         return imie;
     }
 
     private void setImie(String imie) {
-
         this.imie = imie;
     }
 
     protected String getNazwisko() {
-
         return nazwisko;
     }
 
     private void setNazwisko(String nazwisko) {
-
         this.nazwisko = nazwisko;
     }
 
     protected String getEmail() {
-
         return email;
     }
 
     private void setEmail(String email) {
-
         this.email = email;
     }
 
@@ -72,7 +66,6 @@ public class Uzytkownik {
     }
 
     private void setNumerTelefonu(String numerTelefonu) {
-
         this.numerTelefonu = numerTelefonu;
     }
 }

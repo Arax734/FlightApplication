@@ -1,71 +1,49 @@
 public class Rezerwacja {
+    private int numer_rezerwacji;
     private Lot lot;
     private Uzytkownik uzytkownik;
     private int liczbaMiejsc;
     private double cena;
-    private boolean statusPlatnosci;
-    private String numer_rezerwacji;
+    BazaUzytkownikow baza_uzytkownikow = BazaUzytkownikow.getInstance();
+    BazaLotow baza_lotow = BazaLotow.getInstance();
+    private String numerLotu;
+    private String loginuzytkownika;
 
-    public Rezerwacja(Lot lot, Uzytkownik uzytkownik, int liczbaMiejsc, double cena, boolean statusPlatnosci) {
-        this.lot = lot;
-        this.uzytkownik = uzytkownik;
+    public Rezerwacja(int numer_rezerwacji, String numerLotu, String uzytkownik, int liczbaMiejsc, double cena) {
+        this.numer_rezerwacji = numer_rezerwacji;
+        this.lot = BazaLotow.getInstance().getLoty().get(BazaLotow.getInstance().getFlightSlot(numerLotu));
+        this.uzytkownik = baza_uzytkownikow.getUzytkownicy().get(baza_uzytkownikow.getUserSlot(uzytkownik));
         this.liczbaMiejsc = liczbaMiejsc;
         this.cena = cena;
-        this.statusPlatnosci = statusPlatnosci;
+        this.numerLotu = numerLotu;
+        this.loginuzytkownika = uzytkownik;
     }
 
     protected Lot getLot() {
-
         return lot;
     }
 
-    private void setLot(Lot lot) {
-
-        this.lot = lot;
-    }
-
     protected Uzytkownik getUzytkownik() {
-
         return uzytkownik;
     }
 
-    private void setUzytkownik(Uzytkownik uzytkownik) {
-
-        this.uzytkownik = uzytkownik;
-    }
-
     protected int getLiczbaMiejsc() {
-
         return liczbaMiejsc;
     }
 
-    private void setLiczbaMiejsc(int liczbaMiejsc) {
-
-        this.liczbaMiejsc = liczbaMiejsc;
-    }
-
     protected double getCena() {
-
         return cena;
     }
 
-    private void setCena(double cena) {
-
-        this.cena = cena;
-    }
-
-    protected boolean getStatusPlatnosci() {
-
-        return statusPlatnosci;
-    }
-
-    protected void setStatusPlatnosci(boolean statusPlatnosci) {
-
-        this.statusPlatnosci = statusPlatnosci;
-    }
-
-    protected String getNumerRezerwacji(){
-
+    protected int getNumerRezerwacji(){
         return numer_rezerwacji;
+    }
+
+    protected String getNumerLotu(){
+        return numerLotu;
+    }
+
+    protected String getLoginUzytkownika(){
+        return loginuzytkownika;
     }
 }

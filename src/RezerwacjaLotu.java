@@ -1,77 +1,162 @@
 import javax.swing.*;
+import javax.swing.text.NumberFormatter;
+
 import java.awt.*;
 import java.awt.event.*;
-
+import java.text.NumberFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 public class RezerwacjaLotu extends JFrame implements ActionListener {
-    private JTextField firstNameField;
-    private JTextField lastNameField;
-    private JTextField emailField;
-    private JTextField phoneField;
-    private JTextField departureField;
-    private JTextField destinationField;
-    private JTextField departureDateField;
-    private JTextField returnDateField;
-    private JTextField numPassengersField;
+    private JFormattedTextField numPassengersField;
+    private double cena;
+    private Lot selected;
 
     private Uzytkownik uzytkownik;
-    private BazaRezerwacji rezerwacje;
 
-    public RezerwacjaLotu(Uzytkownik uzytkownik, BazaRezerwacji rezerwacje) {
+    public RezerwacjaLotu(Uzytkownik uzytkownik) {
         this.uzytkownik = uzytkownik;
-        this.rezerwacje = rezerwacje;
         setTitle("Rezerwacja lotu");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(500, 400);
 
         // Tworzenie panelu z formularzem
         JPanel formPanel = new JPanel();
-        formPanel.setLayout(new GridLayout(9, 2));
+        formPanel.setLayout(new GridLayout(11, 2));
 
-        JLabel firstNameLabel = new JLabel("Imię:");
-        firstNameField = new JTextField(20);
-        formPanel.add(firstNameLabel);
-        formPanel.add(firstNameField);
-
-        JLabel lastNameLabel = new JLabel("Nazwisko:");
-        lastNameField = new JTextField(20);
-        formPanel.add(lastNameLabel);
-        formPanel.add(lastNameField);
-
-        JLabel emailLabel = new JLabel("Adres e-mail:");
-        emailField = new JTextField(20);
-        formPanel.add(emailLabel);
-        formPanel.add(emailField);
-
-        JLabel phoneLabel = new JLabel("Numer telefonu:");
-        phoneField = new JTextField(20);
-        formPanel.add(phoneLabel);
-        formPanel.add(phoneField);
+        Lot defaultlot = BazaLotow.getInstance().getLoty().get(0);
+        selected = defaultlot;
 
         JLabel departureLabel = new JLabel("Miejsce wylotu:");
-        departureField = new JTextField(20);
+        JLabel departureField;
+        if (defaultlot == null) {
+            departureField = new JLabel("---");
+        } else {
+            departureField = new JLabel(defaultlot.getSkad());
+        }
         formPanel.add(departureLabel);
         formPanel.add(departureField);
 
         JLabel destinationLabel = new JLabel("Miejsce przylotu:");
-        destinationField = new JTextField(20);
+        JLabel destinationField;
+        if (defaultlot == null) {
+            destinationField = new JLabel("---");
+        } else {
+            destinationField = new JLabel(defaultlot.getDokad());
+        }
         formPanel.add(destinationLabel);
         formPanel.add(destinationField);
 
         JLabel departureDateLabel = new JLabel("Data wylotu:");
-        departureDateField = new JTextField(20);
+        JLabel departureDateField;
+        if (defaultlot == null) {
+            departureDateField = new JLabel("---");
+        } else {
+            LocalDateTime dateTime = defaultlot.getDataWylotu();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            String formattedDateTime = dateTime.format(formatter);
+            departureDateField = new JLabel(formattedDateTime);
+        }
         formPanel.add(departureDateLabel);
         formPanel.add(departureDateField);
 
         JLabel returnDateLabel = new JLabel("Data przylotu:");
-        returnDateField = new JTextField(20);
+        JLabel returnDateField;
+        if (defaultlot == null) {
+            returnDateField = new JLabel("---");
+        } else {
+            LocalDateTime dateTime = defaultlot.getDataWylotu();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            String formattedDateTime = dateTime.format(formatter);
+            returnDateField = new JLabel(formattedDateTime);
+        }
         formPanel.add(returnDateLabel);
         formPanel.add(returnDateField);
 
+        JLabel priceLabel = new JLabel("Cena: ");
+        JLabel priceField;
+        if (defaultlot == null) {
+            priceField = new JLabel("--- PLN");
+        } else {
+            priceField = new JLabel(Double.toString(defaultlot.getCena())+" PLN");
+            this.cena = defaultlot.getCena();
+        }
+        formPanel.add(priceLabel);
+        formPanel.add(priceField);
+
         JLabel numPassengersLabel = new JLabel("Ilość pasażerów:");
-        numPassengersField = new JTextField(20);
+        JFormattedTextField numPassengersField;
+
+        NumberFormat integerFormat = NumberFormat.getIntegerInstance();
+        NumberFormatter formatter = new NumberFormatter(integerFormat);
+        formatter.setValueClass(Integer.class);
+
+        numPassengersField = new JFormattedTextField(formatter);
+        numPassengersField.setColumns(20);
+        numPassengersField.setValue(1);
+        this.numPassengersField = numPassengersField;
+        
+        numPassengersField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                String passengerNumberText = numPassengersField.getText();
+                int passengerNumber = Integer.parseInt(passengerNumberText);
+                double doublepassengernumber = (double) passengerNumber;
+                double fullcena;
+                if(selected != null){
+                    fullcena = selected.getCena() * doublepassengernumber;
+                }
+                else{
+                    fullcena = defaultlot.getCena() * doublepassengernumber;
+                }
+                if(passengerNumber <= 0){
+                    return;
+                }
+                priceField.setText(Double.toString(fullcena) + " PLN");
+            }
+        });
+
         formPanel.add(numPassengersLabel);
-        formPanel.add(numPassengersField);
+        formPanel.add(numPassengersField);  
+
+        JLabel flightLabel = new JLabel("Lot: ");
+        ArrayList<Lot> loty = BazaLotow.getInstance().getLoty();
+        String[] loty_string = new String[loty.size()];
+        for (int x = 0; x < loty.size(); x++) {
+            if (loty.get(x) != null) {
+                loty_string[x] = loty.get(x).getSkad();
+                loty_string[x] += " - " + loty.get(x).getDokad();
+            }
+        }
+        JComboBox<String> flightField = new JComboBox<>(loty_string);
+        flightField.setSelectedIndex(0);
+        flightField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Lot selectedFlight = BazaLotow.getInstance().getLoty().get(flightField.getSelectedIndex());
+                selected = selectedFlight;
+                int passengernumber = (int) numPassengersField.getValue();
+                double doublepassengernumber = (double) passengernumber;
+                double fullcena = selectedFlight.getCena() * doublepassengernumber;
+                if(passengernumber <= 0){
+                    return;
+                }
+                priceField.setText(Double.toString(fullcena) + " PLN");
+                cena = fullcena;
+                LocalDateTime dateTime = selectedFlight.getDataWylotu();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                String formattedDateTime = dateTime.format(formatter);
+                departureDateField.setText(formattedDateTime);
+                LocalDateTime dateTime2 = selectedFlight.getDataPrzylotu();
+                String formattedDateTime2 = dateTime2.format(formatter);
+                returnDateField.setText(formattedDateTime2);
+                departureField.setText(selectedFlight.getSkad());
+                destinationField.setText(selectedFlight.getDokad());
+            }
+        }); 
+        formPanel.add(flightLabel);
+        formPanel.add(flightField);
 
         // Tworzenie panelu z przyciskami
         JPanel buttonPanel = new JPanel();
@@ -113,36 +198,25 @@ public class RezerwacjaLotu extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("Potwierdź")) {
             // Pobranie danych z pól tekstowych
-            String firstName = firstNameField.getText();
-            String lastName = lastNameField.getText();
-            String email = emailField.getText();
-            String phone = phoneField.getText();
-            String departure = departureField.getText();
-            String destination = destinationField.getText();
-            String departureDate = departureDateField.getText();
-            String returnDate = returnDateField.getText();
-            String numPassengers = numPassengersField.getText();
-            // Walidacja danych
-            if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || phone.isEmpty() ||
-                    departure.isEmpty() || destination.isEmpty() || departureDate.isEmpty() ||
-                    returnDate.isEmpty() || numPassengers.isEmpty()) {
-                showMessage("Proszę wypełnić wszystkie pola.");
-            } else {
+            int passengernumber = (int) numPassengersField.getValue();
                 try {
-                    int numPassengersInt = Integer.parseInt(numPassengers);
-                    if (numPassengersInt <= 0) {
+                    if (passengernumber <= 0) {
                         showMessage("Ilość pasażerów musi być większa niż 0.");
                     } else {
-                        // Tutaj stworzymy nową rezerwację lotu
-                        showInformation("Rezerwacja zostala pomyslnie wykonana");
-                        PanelUzytkownika main = new PanelUzytkownika(uzytkownik, rezerwacje);
+                        BazaRezerwacji baza = BazaRezerwacji.getInstance();
+                        int id = baza.getRezerwacje().size()+1;
+                        String nazwaPliku = "databases/baza_rezerwacji.txt";
+                        baza.dodajRezerwacje(new Rezerwacja(id,selected.getNumerLotu(),uzytkownik.getLogin(),Integer.parseInt(numPassengersField.getText()),cena), nazwaPliku);
+                        showInformation("Rezerwacja została pomyślnie wykonana");
+                        new PanelUzytkownika(uzytkownik);
                         this.dispose();
                     }
                 } catch (NumberFormatException ex) {
                     showMessage("Ilość pasażerów musi być liczbą.");
                 }
-            }
+            
         } else if (e.getActionCommand().equals("Anuluj")) {
+            new PanelUzytkownika(uzytkownik);
             dispose();
         }
     }

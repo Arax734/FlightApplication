@@ -1,20 +1,13 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.net.URL;
 
 
 public class Logowanie extends JFrame implements ActionListener {
     private JTextField loginField;
     private JTextField hasloField;
-    private String login;
-    private String haslo;
-    private BazaUzytkownikow baza;
 
-    private BazaRezerwacji rezerwacje;
-    public Logowanie(BazaUzytkownikow baza, BazaRezerwacji rezerwacje) {
-        this.baza = baza;
-        this.rezerwacje = rezerwacje;
+    public Logowanie() {
         setTitle("Logowanie");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400, 300);
@@ -80,11 +73,12 @@ public class Logowanie extends JFrame implements ActionListener {
             } else {
                 try {
                     // Jeśli użytkownik istnieje w bazie
-                    if(baza.checkIfUserExists(login, baza)){
-                        Uzytkownik uzytkownik = baza.uzytkownicy[baza.getUserSlot(login,baza)];
+                    BazaUzytkownikow baza = BazaUzytkownikow.getInstance();
+                    if(baza.checkIfUserExists(login)){
+                        Uzytkownik uzytkownik = baza.getUzytkownicy().get(baza.getUserSlot(login));
                         // Jeśli hasło się zgadza
                         if(uzytkownik.getHaslo().equals(haslo)){
-                            PanelUzytkownika panel = new PanelUzytkownika(uzytkownik, rezerwacje);
+                            new PanelUzytkownika(uzytkownik);
                             this.dispose();
                         }else {
                             showInformation("Podano bledne haslo!");
@@ -96,7 +90,7 @@ public class Logowanie extends JFrame implements ActionListener {
                 }
             }
         } else if (e.getActionCommand().equals("Anuluj")) {
-            Opcje main = new Opcje(baza, rezerwacje);
+            new Opcje();
             this.dispose();
         }
     }

@@ -1,14 +1,23 @@
 import java.io.*;
+import java.util.ArrayList;
 
 public class BazaUzytkownikow {
-    protected Uzytkownik[] uzytkownicy = new Uzytkownik[300];
-    private int ilosc_uzytkownikow=0;
+    private static BazaUzytkownikow instance;
+    private ArrayList<Uzytkownik> uzytkownicy = new ArrayList<>();
 
-    BazaUzytkownikow() {
-        for (int x = 0; x < uzytkownicy.length; x++) {
-            uzytkownicy[x] = null;
+    private BazaUzytkownikow() {
+        wczytajUzytkownikowZPliku("databases/baza_uzytkownikow.txt");
+    }
+
+    public static BazaUzytkownikow getInstance() {
+        if (instance == null) {
+            instance = new BazaUzytkownikow();
         }
-        wczytajUzytkownikowZPliku("FlightApplication/databases/baza_uzytkownikow.txt");
+        return instance;
+    }
+
+    protected ArrayList<Uzytkownik> getUzytkownicy(){
+        return this.uzytkownicy;
     }
 
     private void wczytajUzytkownikowZPliku(String nazwaPliku) {
@@ -28,8 +37,7 @@ public class BazaUzytkownikow {
                     String haslo = daneUzytkownika[6];
                     boolean admin = Boolean.parseBoolean(daneUzytkownika[7]);
 
-                    this.uzytkownicy[ilosc_uzytkownikow] = new Uzytkownik(id, imie, nazwisko, email, telefon, login, haslo, admin);
-                    ilosc_uzytkownikow++;
+                    this.uzytkownicy.add(new Uzytkownik(id, imie, nazwisko, email, telefon, login, haslo, admin));
                 } else {
                     System.out.println("Niepoprawny format danych w linii: " + linia);
                 }
@@ -48,15 +56,11 @@ public class BazaUzytkownikow {
         }
     }
 
-    protected int showLastSlot(){
-        return ilosc_uzytkownikow;
-    }
-
-
-    protected boolean checkIfUserExists(String login, BazaUzytkownikow baza) {
-        for (int x = 0; x < baza.uzytkownicy.length; x++) {
-            if(baza.uzytkownicy[x] != null) {
-                if (baza.uzytkownicy[x].getLogin().equals(login)) {
+    protected boolean checkIfUserExists(String login) {
+        BazaUzytkownikow baza = BazaUzytkownikow.getInstance();
+        for (int x = 0; x < baza.uzytkownicy.size(); x++) {
+            if(baza.uzytkownicy.get(x) != null) {
+                if (baza.uzytkownicy.get(x).getLogin().equals(login)) {
                     return true;
                 }
             }
@@ -64,11 +68,12 @@ public class BazaUzytkownikow {
         return false;
     }
 
-    protected int getUserSlot(String login, BazaUzytkownikow baza){
-        if(this.checkIfUserExists(login, baza)) {
-            for (int x = 0; x < baza.uzytkownicy.length; x++) {
-                if (baza.uzytkownicy[x] != null) {
-                    if (baza.uzytkownicy[x].getLogin().equals(login)) {
+    protected int getUserSlot(String login){
+        BazaUzytkownikow baza = BazaUzytkownikow.getInstance();
+        if(this.checkIfUserExists(login)) {
+            for (int x = 0; x < baza.uzytkownicy.size(); x++) {
+                if (baza.uzytkownicy.get(x) != null) {
+                    if (baza.uzytkownicy.get(x).getLogin().equals(login)) {
                         return x;
                     }
                 }
@@ -94,8 +99,38 @@ public class BazaUzytkownikow {
         } catch (IOException e) {
             System.out.println("Wystąpił błąd podczas zapisu do pliku: " + e.getMessage());
         }
-        int slot = this.showLastSlot();
-        this.uzytkownicy[slot] = uzytkownik;
-        ilosc_uzytkownikow++;
+        this.uzytkownicy.add(uzytkownik);
+    }
+
+    protected void usunKonto(int idKonta, String nazwaPliku) {
+        try {
+            File inputFile = new File(nazwaPliku);
+            File tempFile = new File("temp.txt");
+
+            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+
+            String currentLine;
+
+            while ((currentLine = reader.readLine()) != null) {
+                String[] kontoData = currentLine.split(",");
+                int currentNumerRezerwacji = Integer.parseInt(kontoData[0]);
+                if (currentNumerRezerwacji != idKonta) {
+                    writer.write(currentLine);
+                    writer.newLine();
+                }
+            }
+
+            writer.close();
+            reader.close();
+
+            if (inputFile.delete()) {
+                tempFile.renameTo(inputFile);
+            } else {
+                System.out.println("Wystąpił błąd podczas usuwania konta.");
+            }
+        } catch (IOException e) {
+            System.out.println("Wystąpił błąd podczas odczytu/zapisu pliku: " + e.getMessage());
+        }
     }
 }

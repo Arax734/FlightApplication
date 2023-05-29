@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.net.URL;
 
 
 public class Rejestracja extends JFrame implements ActionListener {
@@ -12,20 +11,10 @@ public class Rejestracja extends JFrame implements ActionListener {
 
     private JTextField loginField;
     private JTextField hasloField;
-    private String login;
-    private String haslo;
-    private String imie;
-    private String nazwisko;
-    private String email;
-    private String numerTelefonu;
-    private String adres;
-    private BazaUzytkownikow  baza;
+    private BazaUzytkownikow baza;
 
-    private BazaRezerwacji rezerwacje;
-
-    public Rejestracja(BazaUzytkownikow baza, BazaRezerwacji rezerwacje) {
-        this.baza = baza;
-        this.rezerwacje = rezerwacje;
+    public Rejestracja() {
+        this.baza = BazaUzytkownikow.getInstance();
         setTitle("Rejestracja");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400, 300);
@@ -117,21 +106,21 @@ public class Rejestracja extends JFrame implements ActionListener {
                     if (haslo.length() <= 0) {
                         showMessage("Musisz ustawić hasło!");
                     }
-                    if(baza.checkIfUserExists(login, baza)){
+                    if(baza.checkIfUserExists(login)){
                         showMessage("Użytkownik o danym loginie już istnieje!");
                     }else {
-                        int id = baza.showLastSlot();
+                        int id = baza.getUzytkownicy().size();
                         String nazwaPliku = "databases/baza_uzytkownikow.txt";
                         baza.dodajUzytkownika(new Uzytkownik(id,firstName,lastName,email,phone,login,haslo,false),nazwaPliku);
                         showInformation("Rejestracja została pomyślnie wykonana");
-                        Opcje main = new Opcje(baza, rezerwacje);
+                        new Opcje();
                         this.dispose();
                     }
                 } catch (NumberFormatException ex) {
                 }
             }
         } else if (e.getActionCommand().equals("Anuluj")) {
-            Opcje main = new Opcje(baza, rezerwacje);
+            new Opcje();
             this.dispose();
         }
     }

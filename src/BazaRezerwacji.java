@@ -1,14 +1,19 @@
 import java.io.*;
+import java.util.ArrayList;
 
 public class BazaRezerwacji {
-    private Rezerwacja[] rezerwacje = new Rezerwacja[500];
-    private int ilosc_rezerwacji=0;
+    private static BazaRezerwacji instance;
+    private ArrayList<Rezerwacja> rezerwacje = new ArrayList<>();
 
-    BazaRezerwacji(){
-        for(int x=0; x< rezerwacje.length; x++){
-            rezerwacje[x] = null;
+    BazaRezerwacji() {
+        wczytajRezerwacjeZPliku("databases/baza_rezerwacji.txt");
+    }
+
+    public static BazaRezerwacji getInstance() {
+        if (instance == null) {
+            instance = new BazaRezerwacji();
         }
-        wczytajRezerwacjeZPliku("FlightApplication/databases/baza_rezerwacji.txt");
+        return instance;
     }
 
     private void wczytajRezerwacjeZPliku(String nazwaPliku) {
@@ -18,17 +23,15 @@ public class BazaRezerwacji {
                 // Podziel linię na poszczególne elementy użytkownika
                 String[] daneRezerwacji = linia.split(",");
 
-                if (daneRezerwacji.length == 6) {
-                    // Do modyfikacji typy danych
-                    String lot = daneRezerwacji[0];
-                    String uzytkownik = daneRezerwacji[1];
-                    String liczbaMiejsc = daneRezerwacji[2];
-                    String cena = daneRezerwacji[3];
-                    String statusPlatnosci = daneRezerwacji[4];
-                    String numer_rezerwacji = daneRezerwacji[5];
+                if (daneRezerwacji.length == 5) {
+                    int numer_rezerwacji = Integer.parseInt(daneRezerwacji[0]);
+                    String lot = daneRezerwacji[1];
+                    String uzytkownik = daneRezerwacji[2];
+                    int liczbaMiejsc = Integer.parseInt(daneRezerwacji[3]);
+                    double cena = Double.parseDouble(daneRezerwacji[4]);
 
-                    //this.rezerwacje[ilosc_rezerwacji] = new Rezerwacja(lot, uzytkownik, liczbaMiejsc, cena, statusPlatnosci, numer_rezerwacji);
-                    ilosc_rezerwacji++;
+                    this.rezerwacje.add(new Rezerwacja(numer_rezerwacji, lot, uzytkownik, liczbaMiejsc,
+                    cena));
                 } else {
                     System.out.println("Niepoprawny format danych w linii: " + linia);
                 }
@@ -47,15 +50,10 @@ public class BazaRezerwacji {
         }
     }
 
-    private int showLastSlot(){
-
-        return ilosc_rezerwacji;
-    }
-
-    private boolean checkIfExists(String numer_rezerwacji, BazaRezerwacji baza) {
-        for (int x = 0; x < baza.rezerwacje.length; x++) {
-            if(baza.rezerwacje[x] != null) {
-                if (baza.rezerwacje[x].getNumerRezerwacji().equals(numer_rezerwacji)) {
+    private boolean checkIfExists(int numer_rezerwacji, BazaRezerwacji baza) {
+        for (int x = 0; x < baza.rezerwacje.size(); x++) {
+            if (baza.rezerwacje.get(x) != null) {
+                if (baza.rezerwacje.get(x).getNumerRezerwacji() == numer_rezerwacji) {
                     return true;
                 }
             }
@@ -63,11 +61,11 @@ public class BazaRezerwacji {
         return false;
     }
 
-    private int getUserSlot(String numer_rezerwacji, BazaRezerwacji baza){
-        if(this.checkIfExists(numer_rezerwacji, baza)) {
-            for (int x = 0; x < baza.rezerwacje.length; x++) {
-                if (baza.rezerwacje[x] != null) {
-                    if (baza.rezerwacje[x].getNumerRezerwacji().equals(numer_rezerwacji)) {
+    protected int getRezerwacjaSlot(int numer_rezerwacji, BazaRezerwacji baza) {
+        if (this.checkIfExists(numer_rezerwacji, baza)) {
+            for (int x = 0; x < baza.rezerwacje.size(); x++) {
+                if (baza.rezerwacje.get(x) != null) {
+                    if (baza.rezerwacje.get(x).getNumerRezerwacji() == numer_rezerwacji) {
                         return x;
                     }
                 }
@@ -77,28 +75,59 @@ public class BazaRezerwacji {
         return -1;
     }
 
-    private void dodajRezerwacje(Rezerwacja rezerwacja){
-        int slot = this.showLastSlot();
-        this.rezerwacje[slot] = rezerwacja;
-        ilosc_rezerwacji++;
+    protected int getLotID(String numerLotu) {
+        return BazaLotow.getInstance().getFlightSlot(numerLotu);
     }
 
-    protected void dodajRezerwacje(Rezerwacja rezerwacja, String nazwaPliku){
+    protected ArrayList<Rezerwacja> getRezerwacje() {
+        return rezerwacje;
+    }
+
+    protected void dodajRezerwacje(Rezerwacja rezerwacja, String nazwaPliku) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(nazwaPliku, true))) {
-            String nowaRezerwacja =
-                    rezerwacja.getLot() + "," +
-                            rezerwacja.getUzytkownik() + "," +
-                            rezerwacja.getLiczbaMiejsc() + "," +
-                            rezerwacja.getCena() + "," +
-                            rezerwacja.getStatusPlatnosci() + "," +
-                            rezerwacja.getNumerRezerwacji();
+            String nowaRezerwacja = rezerwacja.getNumerRezerwacji() + "," +
+                    rezerwacja.getNumerLotu() + "," +
+                    rezerwacja.getLoginUzytkownika() + "," +
+                    rezerwacja.getLiczbaMiejsc() + "," +
+                    rezerwacja.getCena();
             writer.println(nowaRezerwacja);
-            System.out.println("Dodano nowego użytkownika do pliku.");
+            System.out.println("Dodano nowa rezerwacje do pliku.");
         } catch (IOException e) {
             System.out.println("Wystąpił błąd podczas zapisu do pliku: " + e.getMessage());
         }
-        int slot = this.showLastSlot();
-        this.rezerwacje[slot] = rezerwacja;
-        ilosc_rezerwacji++;
+        this.rezerwacje.add(rezerwacja);
     }
+
+    protected void usunRezerwacje(int numerRezerwacji, String nazwaPliku) {
+        try {
+            File inputFile = new File(nazwaPliku);
+            File tempFile = new File("temp.txt");
+
+            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+
+            String currentLine;
+
+            while ((currentLine = reader.readLine()) != null) {
+                String[] rezerwacjaData = currentLine.split(",");
+                int currentNumerRezerwacji = Integer.parseInt(rezerwacjaData[0]);
+                if (currentNumerRezerwacji != numerRezerwacji) {
+                    writer.write(currentLine);
+                    writer.newLine();
+                }
+            }
+
+            writer.close();
+            reader.close();
+
+            if (inputFile.delete()) {
+                tempFile.renameTo(inputFile);
+            } else {
+                System.out.println("Wystąpił błąd podczas usuwania rezerwacji.");
+            }
+        } catch (IOException e) {
+            System.out.println("Wystąpił błąd podczas odczytu/zapisu pliku: " + e.getMessage());
+        }
+    }
+
 }
