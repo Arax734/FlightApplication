@@ -1,3 +1,2 @@
 0,William,Dunbar,wd@gmail.com,123456789,arax,1234,true
-1,Natalia,Smotrytska,smtryskya@gmail.com,123456789,smtryskya,1234,false
-2,Kacper,Fryt,kfryt@gmail.com,123456789,kfryt,1234,false
+1,Kacper,Fryt,kfryt@gmail.com,123456789,kfryt,1234,false
