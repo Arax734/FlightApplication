@@ -7,13 +7,10 @@ import javax.swing.*;
 
 public class AnulujRezerwacje extends JFrame implements ActionListener{
     private Rezerwacja selected;
-
     private Uzytkownik uzytkownik;
-    private BazaRezerwacji rezerwacje;
 
     public AnulujRezerwacje(Uzytkownik uzytkownik) {
         this.uzytkownik = uzytkownik;
-        this.rezerwacje = BazaRezerwacji.getInstance();
         setTitle("Usun rezerwacje");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(500, 400);
@@ -33,7 +30,7 @@ public class AnulujRezerwacje extends JFrame implements ActionListener{
             }
         }
         if(moje.isEmpty()){
-            showInformation("Brak wykonanych rezerwacji");
+            showMessage("Brak wykonanych rezerwacji");
         }
         String[] rezerwacja_string = new String[moje.size()];
         for (int x = 0; x < moje.size(); x++) {
@@ -113,6 +110,11 @@ public class AnulujRezerwacje extends JFrame implements ActionListener{
             new PanelUzytkownika(uzytkownik);
             dispose();
         }
+    }
+
+    private void showMessage(String message) {
+        // Wyświetlenie informacji zwrotnej dla użytkownika
+        JOptionPane.showMessageDialog(this, message, "Błąd", JOptionPane.ERROR_MESSAGE);
     }
 
     private void showInformation(String message) {

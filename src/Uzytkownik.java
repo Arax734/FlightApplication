@@ -27,24 +27,12 @@ public class Uzytkownik {
         return imie;
     }
 
-    private void setImie(String imie) {
-        this.imie = imie;
-    }
-
     protected String getNazwisko() {
         return nazwisko;
     }
 
-    private void setNazwisko(String nazwisko) {
-        this.nazwisko = nazwisko;
-    }
-
     protected String getEmail() {
         return email;
-    }
-
-    private void setEmail(String email) {
-        this.email = email;
     }
 
     protected String getNumerTelefonu() {
@@ -65,7 +53,4 @@ public class Uzytkownik {
         return admin;
     }
 
-    private void setNumerTelefonu(String numerTelefonu) {
-        this.numerTelefonu = numerTelefonu;
-    }
 }

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import javax.swing.*;
 
 public class UsunKonto extends JFrame implements ActionListener {
-    private Rezerwacja selected;
     private Uzytkownik uzytkownik;
     private JTextField emailField;
     private JTextField hasloField;
@@ -22,7 +21,7 @@ public class UsunKonto extends JFrame implements ActionListener {
         JPanel formPanel = new JPanel();
         formPanel.setLayout(new GridLayout(4, 3));
 
-        JLabel emailLabel = new JLabel("Wstaw nowy adres email: ");
+        JLabel emailLabel = new JLabel("Wstaw obecny adres email: ");
         emailField = new JTextField(20);
 
         formPanel.add(emailLabel);
@@ -86,8 +85,9 @@ public class UsunKonto extends JFrame implements ActionListener {
                         for(int x=0; x<bazar.size(); x++){
                             if(bazar.get(x).getUzytkownik() == this.uzytkownik){
                                 int obecna = bazar.get(x).getNumerRezerwacji();
-                                BazaRezerwacji.getInstance().getRezerwacje().remove(bazar.get(x));
+                                System.out.println(obecna);
                                 BazaRezerwacji.getInstance().usunRezerwacje(obecna, "databases/baza_rezerwacji.txt");
+                                BazaRezerwacji.getInstance().getRezerwacje().remove(bazar.get(x));
                             }
                         }
                         int obecny = this.uzytkownik.getID();

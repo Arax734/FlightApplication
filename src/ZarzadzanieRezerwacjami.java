@@ -7,13 +7,10 @@ import javax.swing.*;
 
 public class ZarzadzanieRezerwacjami extends JFrame implements ActionListener{
     private Rezerwacja selected;
-
     private Uzytkownik uzytkownik;
-    private BazaRezerwacji rezerwacje;
 
     public ZarzadzanieRezerwacjami(Uzytkownik uzytkownik) {
         this.uzytkownik = uzytkownik;
-        this.rezerwacje = BazaRezerwacji.getInstance();
         setTitle("Zarzadzanie rezerwacjami");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(500, 400);
@@ -21,7 +18,7 @@ public class ZarzadzanieRezerwacjami extends JFrame implements ActionListener{
         if(BazaRezerwacji.getInstance().getRezerwacje().isEmpty()){
             showMessage("Brak rezerwacji w bazie danych!");
             new PanelUzytkownika(uzytkownik);
-            this.dispose();
+            dispose();
         }
 
         // Tworzenie panelu z formularzem
